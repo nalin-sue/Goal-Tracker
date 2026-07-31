@@ -1,0 +1,35 @@
+#Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+#Eclipse
+.project
+.classpath
+.settings/
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+#IntelliJ
+.idea
+*.ipr
+*.iml
+*.iws
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+#NetBeans
+nb-configuration.xml
+
+#VS Code
+.vscode/
+
+#Mac
+.DS_Store
+
+# Quarkus
+.quarkus/
+
+# Env
+.env

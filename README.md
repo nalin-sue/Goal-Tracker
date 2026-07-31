@@ -1,6 +1,10 @@
 # Goal-Tracker
 Yearly goals tracker mobile application with daily activity log.
 
+# How to run backend
+1. Run `./mvnw quarkus:dev` in terminal. (`mvnw.cmd quarkus:dev` on Windows)
+2. Go to `http://localhost:8080/q/swagger-ui` in browser to test APIs.
+
 # Planning
 ## Requirement Planning
 1. Sketch or write requirements (functional, non-functional), UX workflow, screen mockups, a data model, and API list
@@ -34,3 +38,40 @@ The following rules apply to every single slice, without exception:
 4. Write Login feature prompts (backend slices → frontend slices → review prompt) in detail.
 5. Create the progress log template claude-log.md (date / topic / decision / files touched table).
 6. Future features get their prompt files generated one at a time, after the previous feature ships — not all upfront.
+
+# Backend
+
+Quarkus (Java 21, Maven) app in `/backend`, backed by PostgreSQL. This slice only proves the app boots and can reach Postgres — no entities, auth, or business endpoints yet.
+
+**Layout** (`backend/src/main/java/com/goaltracker/`):
+- `resource/` — JAX-RS endpoints (controllers). No business logic, no SQL. Currently just `HealthResource` (`GET /health`).
+- `service/` — business logic, called by resources. Empty placeholder (`.gitkeep`) for now.
+- `repository/` — data access, called by services. No SQL in resources or services. Empty placeholder (`.gitkeep`) for now.
+
+`docker-compose.yml` and `.env.example` live in `backend/` (not the repo root), since they're backend-only concerns.
+
+**Run locally:**
+
+1. From `backend/`, copy the env template and fill in real values:
+   ```
+   cd backend
+   cp .env.example .env
+   ```
+2. Start Postgres:
+   ```
+   docker-compose up -d
+   ```
+3. Export the same variables into your shell (docker-compose auto-loads `.env`, but the Maven-run app does not), then start the app in dev mode:
+   ```
+   export $(grep -v '^#' .env | xargs)
+   ./mvnw quarkus:dev
+   ```
+   On Windows PowerShell, instead of `export`:
+   ```
+   Get-Content .env | Where-Object { $_ -match '=' } | ForEach-Object { $k,$v = $_ -split '=',2; Set-Item "Env:$k" $v }
+   .\mvnw.cmd quarkus:dev
+   ```
+4. Confirm it's up:
+   ```
+   curl http://localhost:8080/health
+   ```

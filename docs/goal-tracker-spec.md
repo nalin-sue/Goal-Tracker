@@ -451,6 +451,24 @@ PostgreSQL
 
 ---
 
+### 7.1 Pinned Versions
+
+Versions are pinned explicitly here so they don't drift between Claude Code sessions/slices — treat any upgrade as a deliberate, discussed decision, not something to silently do mid-slice. Checked against current releases as of the time this section was written (mid-2026); re-verify before starting if a lot of time has passed.
+
+| Component | Version | Why this one |
+|---|---|---|
+| **Java** | 21 (LTS) | Two LTS releases exist (21, 25). 21 is ~3 years old with full ecosystem/tooling support; 25 is newer (~10 months old) and Quarkus only gained full support for it recently. For a project this size, stability and broad library compatibility matter more than being on the newest LTS. |
+| **Flutter** | 3.44 (stable channel) / Dart 3.12 | Latest stable release at time of writing. Use whatever the current stable-channel version is when a slice actually starts — Flutter ships frequently, and stable-channel patch releases are low-risk to stay current on, unlike the Java/Quarkus choice above which is a deliberate pin. |
+| **Quarkus** | Latest LTS (3.33 at time of writing) | Quarkus ships a new LTS every 6 months, so don't hardcode "3.33" long-term — use whichever LTS is current when the backend is scaffolded, and stay on that LTS line (patch upgrades only) for the rest of the project rather than chasing every 6-week feature release. LTS gets 12 months of critical bug/CVE fixes, which matches this project's pace better than the fast-moving mainline. |
+| **PostgreSQL** | 17 | One major version behind the newest stable (18) — mature, broadly supported by every hosting provider and ORM/migration tool, with the newest edge-case bugs already shaken out. PostgreSQL 18 is a reasonable alternative if you want to start on the newest major, but 17 is the safer default for the same reason as the Java choice above. |
+| **State management (Flutter)** | Riverpod (`flutter_riverpod` ^3.x, with `riverpod_generator` + `build_runner`) | Compile-time-safe, doesn't depend on `BuildContext` (making it easier to test business logic in isolation from widgets), and handles async loading/error states natively — useful given how much of this app's data (activities, goals, sync status) is asynchronous. Chosen over `Provider` (Riverpod's predecessor, less type-safe) and `Bloc` (more boilerplate than this project's complexity warrants). |
+| **Auth (backend)** | SmallRye JWT (Quarkus) or Spring Security + `jjwt` (Spring) | Whichever framework is chosen, use its standard first-party JWT library rather than a hand-rolled token implementation — token signing/validation is exactly the kind of security-critical code that shouldn't be reinvented. |
+| **DB migrations** | Flyway | Simple, SQL-first migration tool that both Quarkus and Spring support natively; avoids the complexity of Liquibase's XML/YAML abstraction for a project of this size. |
+| **Secure token storage (Flutter)** | `flutter_secure_storage` | Wraps iOS Keychain / Android Keystore rather than storing the JWT in plain `SharedPreferences` — required given §4 of `agent-backend-engineer.md` and `agent-frontend-engineer.md`'s security-by-default expectation. |
+| **HTTP client (Flutter)** | `dio` | Interceptor support (useful for attaching the JWT to every request and handling the silent token-refresh flow from §6.5's sync-failure handling) beyond what the bare `http` package offers. |
+
+---
+
 ## 8. Open Items / Not Yet Finalized
 - File size/type limits and any resizing for the preset avatar assets (§6.8) — minor, not blocking.
 
