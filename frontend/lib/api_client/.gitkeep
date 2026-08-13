@@ -1,0 +1,1 @@
+HTTP/REST client code - the only layer that knows about the backend's wire format.

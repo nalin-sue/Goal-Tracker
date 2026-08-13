@@ -1,0 +1,1 @@
+Repository layer - mediates between state and the API client; the only thing widgets/state should talk to for data.

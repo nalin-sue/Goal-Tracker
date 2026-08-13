@@ -2,8 +2,13 @@
 Yearly goals tracker mobile application with daily activity log.
 
 # How to run backend
+1. Install Java JDK21
 1. Run `./mvnw quarkus:dev` in terminal. (`mvnw.cmd quarkus:dev` on Windows)
 2. Go to `http://localhost:8080/q/swagger-ui` in browser to test APIs.
+
+# How to run frontend
+1. Install Flutter SDK 3.44+ and make sure `flutter`/`dart` are on PATH.
+2. From `frontend/`, run `flutter pub get`, then `flutter run -d chrome` (web) or `flutter run` (mobile, with an emulator running or a device connected).
 
 # Planning
 ## Requirement Planning
@@ -74,4 +79,35 @@ Quarkus (Java 21, Maven) app in `/backend`, backed by PostgreSQL. This slice onl
 4. Confirm it's up:
    ```
    curl http://localhost:8080/health
+   ```
+
+# Frontend
+
+Flutter app (mobile + web) in `/frontend`, using Riverpod for state management. This slice only proves the app boots — default counter-app placeholder screen, no Goal-Tracker features yet.
+
+**Layout** (`frontend/lib/`):
+- `ui/` — widgets and screens.
+- `state/` — Riverpod providers and app state.
+- `repository/` — mediates between state and the API client; the only thing widgets/state should talk to for data.
+- `api_client/` — HTTP/REST client code; the only layer that knows about the backend's wire format.
+
+**Run locally:**
+
+1. Install the Flutter SDK (3.44+) and make sure `flutter`/`dart` are on PATH — confirm with:
+   ```
+   flutter doctor
+   ```
+2. From `frontend/`, fetch dependencies:
+   ```
+   cd frontend
+   flutter pub get
+   ```
+3. Run on web:
+   ```
+   flutter run -d chrome
+   ```
+4. Run on mobile — start an Android emulator (Android Studio → Device Manager) or connect a physical device with USB debugging enabled, then:
+   ```
+   flutter devices
+   flutter run
    ```
